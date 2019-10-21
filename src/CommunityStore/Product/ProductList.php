@@ -271,13 +271,25 @@ class ProductList extends AttributedItemList implements PaginationProviderInterf
                 $query->orderBy('pName', 'desc');
                 break;
             case "price":
-                $query->orderBy('pPrice', $this->getSortByDirection());
+                // Allow ordering by sale price
+                // @see https://stackoverflow.com/questions/2051602/mysql-orderby-a-number-nulls-last#answer-8174026
+                // @see http://troels.arvin.dk/db/rdbms/#select-order_by
+                $query->orderBy('-pSalePrice', strtolower($this->getSortByDirection()) === 'asc' ? 'desc' : 'asc');
+                $query->addOrderBy('pPrice', $this->getSortByDirection());
                 break;
             case "price_asc":
-                $query->orderBy('pPrice', 'asc');
+                // Allow ordering by sale price
+                // @see https://stackoverflow.com/questions/2051602/mysql-orderby-a-number-nulls-last#answer-8174026
+                // @see http://troels.arvin.dk/db/rdbms/#select-order_by
+                $query->orderBy('-pSalePrice', 'desc');
+                $query->addOrderBy('pPrice', 'asc');
                 break;
             case "price_desc":
-                $query->orderBy('pPrice', 'desc');
+                // Allow ordering by sale price
+                // @see https://stackoverflow.com/questions/2051602/mysql-orderby-a-number-nulls-last#answer-8174026
+                // @see http://troels.arvin.dk/db/rdbms/#select-order_by
+                $query->orderBy('-pSalePrice', 'asc');
+                $query->addOrderBy('pPrice', 'desc');
                 break;
             case "active":
                 $query->orderBy('pActive', $this->getSortByDirection());
